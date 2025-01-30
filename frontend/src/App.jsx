@@ -1,14 +1,21 @@
 
 import './assets/Styles/main.scss'
 import LoginPage from './Pages/LoginPage'
-function App() {
-  
+import SignupPage from './Pages/SignupPage'
+import '../src/assets/Styles/main.scss' 
+import {BrowserRouter, Routes, Route} from 'react-router-dom'
 
-  return (
-    <>
-      <LoginPage/>
-    </>
-  )
+
+function App() {
+
+return (
+		<BrowserRouter>
+			<Routes>
+				<Route path='/register' element={<SignupPage/>}>	</Route>
+				<Route path='/login' element={<LoginPage/>}>	</Route>
+			</Routes>
+		</BrowserRouter>
+	)
 }
 
 export default App

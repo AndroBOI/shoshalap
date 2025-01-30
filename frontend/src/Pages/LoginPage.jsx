@@ -2,10 +2,14 @@ import React from 'react';
 import LoginComponent from '../Components/LoginComponent';
 const LoginPage = () => {
 return (
-    <>
-        <h1>Login Page</h1>
+    <div style={{
+        display: 'flex',
+        justifyContent: 'center',
+        alignItems: 'center',
+        height: '100vh'
+    }}>
         <LoginComponent/>
-    </>
+    </div>
 );
 };
 

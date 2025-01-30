@@ -1,0 +1,93 @@
+@use '../assets/Styles/variables.scss' as *;
+@use '../assets/Styles/mixins' as *;
+
+* {
+  @include reset;
+}
+
+.container {
+  @include center;
+}
+
+.signUpWrapper {
+	
+	align-items: center;
+  border-radius: 20px;
+  border: solid 1px #ddd;  // Light gray border for a softer look
+  width: 300px;
+  height: 400px;
+  display: flex;
+  flex-direction: column;
+  padding: 30px;
+  background-color: #f9f9f9; // Subtle background color for depth
+  box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1); // Soft shadow for better focus
+  transition: all 0.3s ease; // Smooth hover transition
+}
+
+.signUpWrapper:hover {
+  box-shadow: 0 8px 16px rgba(0, 0, 0, 0.2); // Hover effect to elevate the form
+}
+
+.userNameInput, .passwordInput, .confirmPasswordInput {
+  margin-left: 10px;
+  border: none;
+  border-bottom: 2px solid #ccc;  // Lighter border color
+  font-size: 14px;
+  padding: 8px 5px;
+  transition: border-color 0.3s ease; // Smooth focus transition
+  background-color: transparent;
+}
+
+.userNameInput:focus, .passwordInput:focus, .confirmPasswordInput:focus {
+  outline: none;
+  border-color: #007bff;  // Focus border color for visibility
+}
+
+form {
+	width: 100%;
+}
+
+label {
+  font-size: 14px;
+  font-weight: bold;
+  margin-left: 10px;
+  color: #333;  // Slightly d`arker text for labels
+}
+
+.inputWrapper {
+  margin-top: 2rem;
+  display: flex;
+  flex-direction: column;
+}
+
+.btnSignUp {
+  margin-top: 2rem;
+  background-color: #007bff;  // Bootstrap blue
+  border: none;
+  color: white;
+  font-size: 14px;
+  padding: 12px;
+  border-radius: 5px;
+  cursor: pointer;
+  transition: background-color 0.3s ease; // Hover transition
+}
+
+.btnSignUp:hover {
+  background-color: #0056b3;  // Darker shade on hover
+}
+
+.registerBtn {
+    margin-top: 2rem;
+  color: #6c757d;  // Bootstrap gray
+  font-size: 12px;
+  font-weight: bold;
+  text-decoration: underline;
+  cursor: pointer;
+  transition: color 0.3s ease, text-decoration-color 0.3s ease;  // Smooth transition on hover
+}
+
+.registerBtn:hover {
+  color: #495057;  // Darker gray shade on hover
+  text-decoration-color: #495057;  // Change underline color on hover
+}
+
