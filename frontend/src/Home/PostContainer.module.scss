@@ -1,0 +1,69 @@
+@use '../assets/Styles/mixins' as *;
+
+* {
+    @include reset;
+}
+
+
+.postContainer {
+    background-color: white;
+    padding: 1rem;
+    border-radius: 5px;
+    margin-bottom: 1rem;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
+}
+
+.demoProfilePic {
+    width: 40px;
+    height: 40px;
+    border-radius: 50%;
+    background-color: #007bff;
+}
+
+.name {
+    font-size: 1.2rem;
+    font-weight: bold;
+    color: #007bff;
+}
+
+.head {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.postContent {
+    padding: 10px 0;
+    color: #333;
+}
+
+.modifiers {
+    display: flex;
+    align-items: center;
+    gap: 10px;
+}
+
+.buttons button, .commentReply, .edit {
+    background-color: #007bff;
+    color: white;
+    border: none;
+    padding: 5px 10px;
+    border-radius: 3px;
+    cursor: pointer;
+    
+}
+
+.buttons {
+    width: 250px;
+    background-color: white;
+    border: none;
+    justify-content: space-between;
+    display: flex;
+}
+
+.comment {
+    width: 450px;
+    padding: 5px;
+    border: 1px solid #007bff;
+    border-radius: 3px;
+}
