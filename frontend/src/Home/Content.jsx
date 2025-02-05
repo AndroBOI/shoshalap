@@ -13,7 +13,7 @@ return (
                 posts.lenght === 0 ? (
                     <p>No posts yet.</p>
                 ) : (
-                    posts.map((post, index) => <PostContainer key={index} content={post}/>)
+                    posts.map((post, index) => <PostContainer id={index} key={index} content={post}/>)
                 )
             }
         </div>

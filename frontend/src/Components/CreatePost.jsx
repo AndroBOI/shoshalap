@@ -27,8 +27,8 @@ const CreatePost = () => {
                 placeholder="Write something..."></textarea>
 
                 <div className={styles.mediaSending}>
-                    <button>Send Image</button>
-                    <button>Send Video</button>
+                    <button className={styles.imageBtn}>Send Image</button>
+                    <button className={styles.videoBtn}>Send Video</button>
                 </div>
 
                 <button
