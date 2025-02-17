@@ -13,24 +13,34 @@ const PostContainer = ({ content, id }) => {
     const [disLikes, setDisLikes] = useState(0);
     const [liked, setLiked] = useState(false); 
     const [disliked, setDisliked] = useState(false); 
+
     const handleLike = () => {
         if (liked) {
             setLikes(prev => prev - 1);
+            setLiked(false);
         } else {
-            setLikes(prev => prev + 1)
+            setLikes(prev => prev + 1);
+            setLiked(true);
+            if (disliked) {
+                setDisLikes(prev => prev - 1);
+                setDisliked(false);
+            }
         }
-        setLiked(!liked);
-    }
-
+    };
+    
     const handleDisLike = () => {
         if (disliked) {
             setDisLikes(prev => prev - 1);
+            setDisliked(false);
         } else {
-            setDisLikes(prev => prev + 1)
-        };
-            setDisliked(!disliked)
-    }
-
+            setDisLikes(prev => prev + 1);
+            setDisliked(true);
+            if (liked) {
+                setLikes(prev => prev - 1);
+                setLiked(false);
+            }
+        }
+    };
     const handleDelete = () => {
         deletePost(id);
     };
