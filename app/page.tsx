@@ -1,6 +1,11 @@
+import {prisma} from "@/lib/prisma"
 import React from "react";
 
-const page = () => {
+const page = async () => {
+
+
+
+
   return (
     <div>
      <h1>Home Page Content</h1>
