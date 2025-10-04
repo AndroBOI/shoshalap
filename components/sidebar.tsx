@@ -20,7 +20,7 @@ const Sidebar = async () => {
 
   return (
     <div className="sticky top-20">
-      <Card>
+      <Card className="bg-transparent">
         <CardContent className="pt-6">
           <div className="flex flex-col items-center text-center">
             <Link
