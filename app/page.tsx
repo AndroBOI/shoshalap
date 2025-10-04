@@ -2,6 +2,7 @@
 import { currentUser } from "@clerk/nextjs/server";
 import React from "react";
 import CreatePost from "@/components/create-post";
+import RecommendUser from "@/components/recommend-user";
 const page = async () => {
 
   const user = await currentUser()
@@ -13,7 +14,7 @@ const page = async () => {
         {user ? <CreatePost/> : null}
       </div>
       <div className="hidden lg:block lg:col-span-4 sticky top-20">
-        WhoToFollow
+        <RecommendUser/>
       </div>
     </div>
   );
