@@ -11,7 +11,7 @@ const RecommendUser = async () => {
   if (users.length === 0) return null;
 
   return (
-    <Card>
+    <Card className="bg-transparent shadow-none">
       <CardHeader>
         <CardTitle>Who to Follow</CardTitle>
       </CardHeader>

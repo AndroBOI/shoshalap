@@ -10,8 +10,6 @@ import { ImageIcon, Loader2Icon, SendIcon } from "lucide-react";
 import { createPost } from "@/actions/post.action";
 import toast from "react-hot-toast";
 
-
-
 const CreatePost = () => {
   const { user } = useUser();
   const [content, setContent] = useState("");
@@ -21,20 +19,20 @@ const CreatePost = () => {
 
   const handleSubmit = async () => {
     try {
-      if(!content.trim() && !imageUrl) return
-      const result = await createPost(content, imageUrl)
-      if(result.success) {
-        setContent("")
-        setImageUrl("")
-        setShowImageUpload(false) 
-        toast.success("Post created successfully")
+      if (!content.trim() && !imageUrl) return;
+      const result = await createPost(content, imageUrl);
+      if (result.success) {
+        setContent("");
+        setImageUrl("");
+        setShowImageUpload(false);
+        toast.success("Post created successfully");
       }
-      setIsPosting(true)
+      setIsPosting(true);
     } catch (error) {
-      console.log("Failed to create post:", error)
-      toast.error("Failed to create post")
+      console.log("Failed to create post:", error);
+      toast.error("Failed to create post");
     } finally {
-      setIsPosting(false)
+      setIsPosting(false);
     }
   };
 

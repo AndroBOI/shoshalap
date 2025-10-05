@@ -54,10 +54,10 @@ export const getUserByClerkId = async (clerkId: string) => {
 
 export const getDbUserId =  async () => {
   const {userId: clerkId} = await auth()
-  if(!clerkId) throw new Error("Unauthorized")
+  if(!clerkId) return null
 
   const user = await getUserByClerkId(clerkId)
-  if(!user) throw new Error("User not found")
+  if(!user) return null;
 
   return user.id
 }
@@ -65,7 +65,7 @@ export const getDbUserId =  async () => {
 export const getRandomUsers = async () => {
   try {
     const userId = await getDbUserId()
-
+    if(!userId) return []
 
     const randomUsers = await prisma.user.findMany({
       where: {
@@ -103,6 +103,56 @@ export const getRandomUsers = async () => {
   }
 }
 
-export const toggleFollow = async (userId: string) => {
+export const toggleFollow = async (targetUserId: string) => {
+  try {
+    const userId = await getDbUserId()
 
+    if(!userId) return {success: false, message: "Unauthorized"}
+
+    if(userId === targetUserId) throw new Error("You cannot follow yourself")
+
+    const existingFollow = await prisma.follows.findUnique({
+      where: {
+        followerId_followingId: {
+          followerId: userId,
+          followingId: targetUserId
+        }
+      }
+    })
+
+    if(existingFollow) {
+       await prisma.follows.delete({
+        where: {
+          followerId_followingId: {
+            followerId: userId,
+            followingId: targetUserId
+          }
+        }
+       })
+    } else {
+      await prisma.$transaction([
+        prisma.follows.create({
+          data: {
+            followerId: userId,
+            followingId: targetUserId
+          }
+        }),
+
+        prisma.notification.create({
+          data: {
+            type: "FOLLOW",
+            userId: targetUserId,
+            creatorId: userId
+          }
+        })
+      ])
+    }
+
+    return {success: true}
+
+
+  } catch (error) {
+    console.log("Error in toggleFollow", error)
+    return {success: false, error: "Error toggling follow"}
+  }
 }
