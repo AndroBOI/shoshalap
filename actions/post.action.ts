@@ -36,6 +36,7 @@ export const getPosts = async () => {
             include: {
                 author: {
                     select: {
+                        id: true,
                         name: true,
                         image: true,
                         username: true
@@ -189,5 +190,31 @@ export const createComment = async (postId: string, content: string) => {
     } catch (error) {
         console.error("Failed to create comment:", error)
         return {success: false, error: "Failed to create comment"}
+    }
+}
+
+export const deletePost = async (postId: string) => {
+    try {
+        const userId = await getDbUserId()
+
+        const post = await prisma.post.findUnique({
+            where: {id: postId},
+            select: {authorId: true}
+        })
+
+
+        if(!post) throw new Error("Post not found")
+        if(post.authorId !== userId) throw new Error("Unauthorized - no delete permission")
+
+        await prisma.post.delete({
+            where: {id: postId}
+        })
+
+
+        revalidatePath("/")
+        return {success: true}
+    } catch (error) {
+        console.error("Failed to delete post:", error)
+        return {success: false, error: "Failed to delete post"}
     }
 }

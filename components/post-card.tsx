@@ -1,57 +1,131 @@
-"use client"
-import { getPosts } from '@/actions/post.action';
-import React, {useState} from 'react'
-import { useUser } from '@clerk/nextjs';
-import { toggleLike } from '@/actions/post.action';
+"use client";
+import { createComment, getPosts, deletePost } from "@/actions/post.action";
+import React, { useState } from "react";
+import { useUser } from "@clerk/nextjs";
+import { toggleLike } from "@/actions/post.action";
+import toast from "react-hot-toast";
+import { Card, CardContent } from "./ui/card";
+import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
+import Link from "next/link";
+import { formatDistanceToNow } from "date-fns";
+import DeleteAlertDialog from "./delete-alert-dialog";
 
+type Posts = Awaited<ReturnType<typeof getPosts>>;
+type Post = Posts[number];
 
-
-type Posts = Awaited<ReturnType<typeof getPosts>>
-type Post = Posts[number]
-
-const PostCard = ({post,dbUserId}: {post: Post; dbUserId: string | null}) => {
-
-    const {user} = useUser()
-    const[newComment, setNewComment] = useState("")
-    const[isCommenting, setIsCommenting] = useState(false)
-    const[isLiking, setIsLiking] = useState(false)
-    const[isDeleting, setIsDeleting] = useState(false)
-    const[hasLiked, setHasLiked] = useState(post.likes.some(like => like.userId === dbUserId))
-    const[optimisticLikes, setOptimisticLikes] = useState(post._count.likes)
-
-
+const PostCard = ({
+  post,
+  dbUserId,
+}: {
+  post: Post;
+  dbUserId: string | null;
+}) => {
+  const { user } = useUser();
+  const [newComment, setNewComment] = useState("");
+  const [isCommenting, setIsCommenting] = useState(false);
+  const [isLiking, setIsLiking] = useState(false);
+  const [isDeleting, setIsDeleting] = useState(false);
+  const [hasLiked, setHasLiked] = useState(
+    post.likes.some((like) => like.userId === dbUserId)
+  );
+  const [optimisticLikes, setOptimisticLikes] = useState(post._count.likes);
 
   const handleLike = async () => {
-    if(isLiking) return
+    if (isLiking) return;
 
     try {
-      setIsLiking(true)
-      setHasLiked(!hasLiked)
-      setOptimisticLikes(prev => prev + (hasLiked ? -1 : 1))
-      await toggleLike(post.id)
+      setIsLiking(true);
+      setHasLiked(!hasLiked);
+      setOptimisticLikes((prev) => prev + (hasLiked ? -1 : 1));
+      await toggleLike(post.id);
     } catch (error) {
-      setOptimisticLikes(post._count.likes)
-      setHasLiked(post.likes.some(like => like.userId === dbUserId))
-      console.log("Error on handling Like", error)
+      setOptimisticLikes(post._count.likes);
+      setHasLiked(post.likes.some((like) => like.userId === dbUserId));
+      console.log("Error on handling Like", error);
     } finally {
-      setIsLiking(false)
+      setIsLiking(false);
     }
-  }
-
+  };
 
   const handleAddComment = async () => {
+    if (!newComment.trim() || isCommenting) return;
 
-  }
-
+    try {
+      setIsCommenting(true);
+      const result = await createComment(post.id, newComment);
+    } catch (error) {
+      toast.error("Failed to add comment");
+    } finally {
+      setIsCommenting(false);
+    }
+  };
 
   const handleDeletePost = async () => {
+    if (isDeleting) return;
 
-  }
-
+    try {
+      setIsDeleting(true);
+      const result = await deletePost(post.id);
+      if (result?.success) {
+        toast.success("Post deleted successfully");
+      } else {
+        throw new Error(result?.error);
+      }
+    } catch (error) {
+      toast.error("Failed to delete post");
+      console.error(error);
+    } finally {
+      setIsDeleting(false);
+    }
+  };
 
   return (
-    <div></div>
-  )
-}
+    <Card className="overflow-hidden bg-transparent shadow-none">
+      <CardContent className="p-4 sm:p-6">
+        <div className="space-y-4">
+          <div className="flex space-x-3 sm:space-x-4">
+            <Link href={`/profile/${post.author.username}`} className="size-8">
+              <Avatar className="size-8 sm:w-10 sm:h-10">
+                <AvatarImage
+                  src={post.author.image ?? "/avatar.png"}
+                  className="rounded-full"
+                />
+              </Avatar>
+            </Link>
 
-export default PostCard
+            <div className="flex-1 min-w-0">
+              <div className="flex items-start justify-between">
+                <div className="flex flex-col sm:flex-row sm:items-center sm:space-x-2 truncate">
+                  <Link href={`/profile/${post.author.username}`}>
+                    {post.author.name}
+                  </Link>
+                  <div className="flex items-center space-x-2 text-sm text-muted-foreground">
+                    <Link href={`/profile/${post.author.username}`}>
+                      @{post.author.username}
+                    </Link>
+                    <span>•</span>
+                    <span>
+                      {formatDistanceToNow(new Date(post.createdAt))} ago
+                    </span>
+                  </div>
+                </div>
+
+                {dbUserId === post.author.id && (
+                  <DeleteAlertDialog
+                    isDeleting={isDeleting}
+                    onDelete={handleDeletePost}
+                  />
+                )}
+              </div>
+              <p className="mt-2 text-sm text-foreground break-words">
+                {post.content}
+              </p>
+            </div>
+          </div>
+        </div>
+      </CardContent>
+    </Card>
+  );
+};
+
+export default PostCard;
