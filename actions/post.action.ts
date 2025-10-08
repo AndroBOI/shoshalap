@@ -77,3 +77,65 @@ export const getPosts = async () => {
         return []
     }
 }
+
+
+export const toggleLike = async (postId: string) => {
+    try {
+        const userId = await getDbUserId()
+        if(!userId) return
+
+        const existingLike = await prisma.like.findUnique({
+            where: {
+                userId_postId: {
+                    userId,
+                    postId,
+                }
+            }
+        })
+
+        const post =  await prisma.post.findUnique({
+            where: {id: postId},
+            select: {authorId: true}
+        })
+
+        if(!post) throw new Error("Post not found")
+
+
+        if(existingLike) {
+            await prisma.like.delete({
+                where: {
+                    userId_postId: {
+                        userId,
+                        postId
+                    }
+                }
+            })
+        } else {
+            await prisma.$transaction([
+                prisma.like.create({
+                    data: {
+                        userId,
+                        postId,
+                    }
+                }),
+                ...(post.authorId !== userId ? [
+                    prisma.notification.create({
+                        data: {
+                            type: "LIKE",
+                            userId: post.authorId,
+                            creatorId: userId,
+                            postId
+                        }
+                    })
+                ] : [])
+            ])
+        }
+
+
+        revalidatePath("/")
+        return {successs: true}
+
+    } catch (error) {
+
+    }
+}

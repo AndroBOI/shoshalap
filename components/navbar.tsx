@@ -6,6 +6,8 @@ import { currentUser } from "@clerk/nextjs/server";
 import { syncUser } from "@/actions/user.action";
 
 
+
+
 const navbar = async () => {
 
   const user = await currentUser()
