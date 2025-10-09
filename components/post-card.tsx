@@ -1,7 +1,7 @@
 "use client";
 import { createComment, getPosts, deletePost } from "@/actions/post.action";
 import React, { useState } from "react";
-import { useUser } from "@clerk/nextjs";
+import {SignInButton, useUser } from "@clerk/nextjs";
 import { toggleLike } from "@/actions/post.action";
 import toast from "react-hot-toast";
 import { Card, CardContent } from "./ui/card";
@@ -9,6 +9,10 @@ import { Avatar, AvatarImage } from "@radix-ui/react-avatar";
 import Link from "next/link";
 import { formatDistanceToNow } from "date-fns";
 import DeleteAlertDialog from "./delete-alert-dialog";
+import Image from "next/image";
+import { Button } from "./ui/button";
+import { HeartIcon } from "lucide-react";
+
 
 type Posts = Awaited<ReturnType<typeof getPosts>>;
 type Post = Posts[number];
@@ -28,6 +32,10 @@ const PostCard = ({
   const [hasLiked, setHasLiked] = useState(
     post.likes.some((like) => like.userId === dbUserId)
   );
+  const[showComment, setShowComment] = useState(false)
+
+
+
   const [optimisticLikes, setOptimisticLikes] = useState(post._count.likes);
 
   const handleLike = async () => {
@@ -122,6 +130,36 @@ const PostCard = ({
               </p>
             </div>
           </div>
+
+          {post.image && (
+            <div className="rounded-lg overflow-hidden">
+              <Image src={post.image} alt="Post content" className="w-full h-auto object-cover"/>
+            </div>
+          )}
+
+
+          <div className="flex items-center pt-2 space-x-4">
+              {user ? (
+                <Button variant={'ghost'} size={'sm'} className={`text-muted-foreground gap-2 ${hasLiked ? "text-red-500 hover:text-red-600" : "hover:text-red500"}`} onClick={handleLike}>
+                  {hasLiked ? (
+                    <HeartIcon className="size-5 fill-current"/>
+                  ) : (
+                    <HeartIcon className="size-5"/>
+                  )}
+                  <span>{optimisticLikes}</span>
+                </Button>
+              ) : (
+                <SignInButton mode="modal">
+                  <Button variant={'ghost'} size={'sm'} className="text-muted-foreground gap-2">
+                    <HeartIcon className="size-5"/>
+                    <span>{optimisticLikes}</span>
+                  </Button>
+                </SignInButton>
+              )}
+
+            
+          </div>
+
         </div>
       </CardContent>
     </Card>
